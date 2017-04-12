@@ -23,7 +23,7 @@ public class ProfileFragment extends Fragment {
                 this.getContext(),
                 android.R.layout.simple_list_item_1,
                 locations);
-        ListView list = (ListView) getActivity().findViewById(R.id.keys_list_profile);
+        MyListView list = (MyListView) getActivity().findViewById(R.id.keys_list_profile);
         list.setAdapter(adapter);
     }
 

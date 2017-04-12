@@ -117,4 +117,5 @@
     <string name="profile_name">YOUR AWESOME NAME</string>
     <string name="title_activity_messages">Messages</string>
     <string name="title_activity_locations">Locations</string>
+    <string name="profile_keys_title">YOUR AWESOME KEYS</string>
 </resources>
