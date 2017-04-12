@@ -115,4 +115,6 @@
     <string name="title_activity_new_profile">NewProfileActivity</string>
     <string name="profile_email">YOUR AWESOME EMAIL</string>
     <string name="profile_name">YOUR AWESOME NAME</string>
+    <string name="title_activity_messages">Messages</string>
+    <string name="title_activity_locations">Locations</string>
 </resources>

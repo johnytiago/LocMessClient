@@ -15,13 +15,11 @@ import android.widget.ListView;
 
 public class LocationsFragment extends Fragment {
 
-    View myView;
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        myView = inflater.inflate(R.layout.locations_layout, container, false);
-        return myView;
+        this.getActivity().setTitle(R.string.title_activity_locations);
+        return inflater.inflate(R.layout.locations_layout, container, false);
     }
 
     private void populateListView() {
@@ -30,7 +28,7 @@ public class LocationsFragment extends Fragment {
                 this.getContext(),
                 android.R.layout.simple_list_item_1,
                 locations);
-        ListView list = (ListView) getActivity().findViewById(R.id.location_list_view);
+        ListView list = (ListView) getActivity().findViewById(R.id.locations_list);
         list.setAdapter(adapter);
     }
 

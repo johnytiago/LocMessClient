@@ -17,7 +17,7 @@
         android:id="@+id/edit_profile_fab"
         android:layout_width="61dp"
         android:layout_height="71dp"
-        android:layout_gravity="top|left"
+        android:layout_gravity="bottom|right"
         android:layout_margin="@dimen/fab_margin"
         app:backgroundTint="@android:color/background_light"
         app:layout_anchor="@+id/include3"
