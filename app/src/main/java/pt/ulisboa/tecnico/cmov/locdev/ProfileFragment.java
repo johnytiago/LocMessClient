@@ -6,8 +6,11 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class ProfileFragment extends Fragment {
     @Nullable
@@ -27,9 +30,22 @@ public class ProfileFragment extends Fragment {
         list.setAdapter(adapter);
     }
 
+    private void setClickListener(){
+        ListView listView = (ListView) getActivity().findViewById(R.id.keys_list_profile);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                // When clicked, show a toast with the TextView text
+                Toast.makeText(getContext(),
+                        ((TextView) view).getText(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         populateListView();
+        //setClickListener();
     }
 }
