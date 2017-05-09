@@ -10,7 +10,6 @@ import java.util.List;
 
 import pt.ulisboa.tecnico.cmov.projcmu.Shared.Location;
 import pt.ulisboa.tecnico.cmov.projcmu.Shared.Message;
-import pt.ulisboa.tecnico.cmov.projcmu.Shared.Profile;
 import pt.ulisboa.tecnico.cmov.projcmu.Shared.User;
 import pt.ulisboa.tecnico.cmov.projcmu.request.AddLocationRequest;
 import pt.ulisboa.tecnico.cmov.projcmu.request.AddMessageRequest;
@@ -36,7 +35,7 @@ public class Client implements ClientInterface{
 	
 	public static Response SendRequest(Request hr) {
 		try {
-			Socket client = new Socket("localhost", portNumber);
+			Socket client = new Socket("10.0.2.2", portNumber);
 			
 			ObjectOutputStream outToServer = new ObjectOutputStream(client.getOutputStream());
 	        ObjectInputStream inFromServer = new ObjectInputStream(client.getInputStream());
@@ -44,7 +43,7 @@ public class Client implements ClientInterface{
 	        outToServer.writeObject(hr);
 	        Response a = (Response) inFromServer.readObject();
 	        
-			System.out.println("Result: " +a.Run());
+			//System.out.println("Result: " +a.Run());
 			//System.out.println("Done");
 			client.close();
 			return a;
@@ -172,5 +171,6 @@ public class Client implements ClientInterface{
 		SaveProfileResponse resp = (SaveProfileResponse) SendRequest(new SaveProfileRequest(this.user));
 		return resp.isSuccess();
 	}
-	
 }
+
+

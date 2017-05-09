@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.cmov.projcmu.request;
 
+import pt.ulisboa.tecnico.cmov.projcmu.Shared.ServerContext;
 import pt.ulisboa.tecnico.cmov.projcmu.Shared.User;
-import pt.ulisboa.tecnico.cmov.projcmu.core.Context;
 import pt.ulisboa.tecnico.cmov.projcmu.response.Response;
 
 public class SaveProfileRequest extends Request {
@@ -20,7 +20,7 @@ public class SaveProfileRequest extends Request {
 	private static final long serialVersionUID = 1L;
 	
 	@Override
-	public Response Run(Context ctx){
+	public Response Run(ServerContext ctx){
 		return this.processRequest(this,ctx);
 	}
 

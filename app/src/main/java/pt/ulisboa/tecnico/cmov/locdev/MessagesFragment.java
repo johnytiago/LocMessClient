@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.cmov.locdev;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import pt.ulisboa.tecnico.cmov.locdev.Application.ClientTask;
+import pt.ulisboa.tecnico.cmov.locdev.Application.LocdevApp;
+import pt.ulisboa.tecnico.cmov.projcmu.Shared.Location;
+import pt.ulisboa.tecnico.cmov.projcmu.Shared.Message;
+import pt.ulisboa.tecnico.cmov.projcmu.Shared.Restriction;
+import pt.ulisboa.tecnico.cmov.projcmu.Shared.User;
+import pt.ulisboa.tecnico.cmov.projcmu.request.GetInfoFromServerRequest;
+import pt.ulisboa.tecnico.cmov.projcmu.request.Request;
+import pt.ulisboa.tecnico.cmov.projcmu.response.GetInfoFromServerResponse;
+import pt.ulisboa.tecnico.cmov.projcmu.response.Response;
+
 public class MessagesFragment extends Fragment {
 
     @Nullable
@@ -25,7 +37,13 @@ public class MessagesFragment extends Fragment {
         return inflater.inflate(R.layout.messages_layout, container, false);
     }
 
-    private void populateListView() {
+    private void populateListView(){
+        LocdevApp Application = (LocdevApp) getActivity().getApplicationContext();
+        new GetLocationsTask().execute(new GetInfoFromServerRequest(Application.getUser(),Application.getCurrentLocation()));
+    }
+
+    private void populateListView(List<Message> messages) {
+        messages.add(new Message(new Location(0,0,"algures"),"Mensagem super awesome",new Restriction(true),new User("User","Pass")));
         // TODO: GO FETCH THIS FROM SERVER
         String[][] msgs = {
                 { "LF Android Developer", "Fred", "25sec ago"},
@@ -37,13 +55,22 @@ public class MessagesFragment extends Fragment {
         int[] to = new int[] { R.id.message_item_title, R.id.message_item_author, R.id.message_item_date};
 
         List<HashMap<String, Object>> fillMaps = new ArrayList<>();
-
-        for(String[] msg : msgs){
-            HashMap<String, Object> map = new HashMap<>();
-            map.put("title", msg[0]); // This will be shown in R.id.message_item_title
-            map.put("author", msg[1]); // And this in R.id.message_item_author
-            map.put("date", msg[2]); // And this in R.id.message_item_date
-            fillMaps.add(map);
+        if(messages.size()>0){
+            for (Message msg : messages) {
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("title", msg.getMessage()); // This will be shown in R.id.message_item_title
+                map.put("author", msg.getUser().getUsername()); // And this in R.id.message_item_author
+                map.put("date", msg.getCreationDate().toString()); // And this in R.id.message_item_date
+                fillMaps.add(map);
+            }
+        }else {
+            for (String[] msg : msgs) {
+                HashMap<String, Object> map = new HashMap<>();
+                map.put("title", msg[0]); // This will be shown in R.id.message_item_title
+                map.put("author", msg[1]); // And this in R.id.message_item_author
+                map.put("date", msg[2]); // And this in R.id.message_item_date
+                fillMaps.add(map);
+            }
         }
 
         SimpleAdapter adapter = new SimpleAdapter(this.getContext(), fillMaps, R.layout.messages_list_item, from, to);
@@ -69,5 +96,27 @@ public class MessagesFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         populateListView();
         setClickListener();
+    }
+
+    public class GetLocationsTask extends ClientTask {
+        public User user;
+        public GetLocationsTask() {
+            super((LocdevApp) getActivity().getApplicationContext());
+        }
+
+        @Override
+        protected Response doInBackground(Request... requests) {
+            GetInfoFromServerRequest req = (GetInfoFromServerRequest) requests[0];
+            this.user = req.getUser();
+            return super.doInBackground(requests);
+        }
+
+        @Override
+        protected void onPostExecute(Response result) {
+            Log.d(this.getClass().getName(),"Start Onpostexecute");
+            GetInfoFromServerResponse processResponse = (GetInfoFromServerResponse) result;
+            this.app.setLocations(processResponse.getLocations());
+            populateListView(this.app.getAvailableMessages());
+        }
     }
 }

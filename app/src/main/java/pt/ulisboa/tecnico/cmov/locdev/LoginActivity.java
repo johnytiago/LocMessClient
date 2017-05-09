@@ -20,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,9 +30,22 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import pt.ulisboa.tecnico.cmov.locdev.Application.ClientTask;
+import pt.ulisboa.tecnico.cmov.locdev.Application.LocdevApp;
+import pt.ulisboa.tecnico.cmov.projcmu.Client;
+import pt.ulisboa.tecnico.cmov.projcmu.Shared.Location;
+import pt.ulisboa.tecnico.cmov.projcmu.Shared.User;
+import pt.ulisboa.tecnico.cmov.projcmu.request.LogInRequest;
+import pt.ulisboa.tecnico.cmov.projcmu.request.Request;
+import pt.ulisboa.tecnico.cmov.projcmu.request.SignInRequest;
+import pt.ulisboa.tecnico.cmov.projcmu.response.LogInResponse;
+import pt.ulisboa.tecnico.cmov.projcmu.response.Response;
+import pt.ulisboa.tecnico.cmov.projcmu.response.SignInResponse;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -51,7 +65,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private UserLoginTask mAuthTask = null;
+//    private UserLoginTask mAuthTask = null;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -71,7 +85,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
+                    attemptLogin(true);
                     return true;
                 }
                 return false;
@@ -82,7 +96,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+                attemptLogin(true);
             }
         });
 
@@ -90,7 +104,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mRegisterButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+                attemptLogin(false);
             }
         });
 
@@ -103,10 +117,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
+    private void attemptLogin(boolean Login) {
+//        if (mAuthTask != null) {
+//            return;
+//        }
 
         // Reset errors.
         mEmailView.setError(null);
@@ -118,6 +132,23 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         boolean cancel = false;
         View focusView = null;
+        if(Login) {
+//            if (((LocdevApp) getApplicationContext()).LogIn(new User(email, password))) {
+//                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+//                startActivity(intent);
+//            } else {
+//                Toast.makeText(this, "Unable to Log in", Toast.LENGTH_LONG);
+//            }
+            new LogInTask().execute(new LogInRequest(email,password));
+        }else{
+//            if (((LocdevApp) getApplicationContext()).SignUp(new User(email, password))) {
+//                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+//                startActivity(intent);
+//            } else {
+//                Toast.makeText(this, "Unable to Register in", Toast.LENGTH_LONG);
+//            }
+            new RegisterTask().execute(new SignInRequest(email,password));
+        }
 
         /*
         // Check for a valid password, if the user entered one.
@@ -138,17 +169,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             cancel = true;
         }*/
 
-        if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            focusView.requestFocus();
-        } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
-        }
+//        if (cancel) {
+//            // There was an error; don't attempt login and focus the first
+//            // form field with an error.
+//            focusView.requestFocus();
+//        } else {
+//            // Show a progress spinner, and kick off a background task to
+//            // perform the user login attempt.
+//            showProgress(true);
+////            mAuthTask = new UserLoginTask(email, password);
+////            mAuthTask.execute((Void) null);
+//        }
     }
 
     private boolean isEmailValid(String email) {
@@ -216,59 +247,113 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final String mEmail;
-        private final String mPassword;
-
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
+//    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+//
+//        private final String mEmail;
+//        private final String mPassword;
+//
+//        UserLoginTask(String email, String password) {
+//            mEmail = email;
+//            mPassword = password;
+//        }
+//
+//        @Override
+//        protected Boolean doInBackground(Void... params) {
+//            // TODO: attempt authentication against a network service.
+//
+//            /*
+//            try {
+//                // Simulate network access.
+//                Thread.sleep(2000);
+//            } catch (InterruptedException e) {
+//                return false;
+//            }
+//
+//            for (String credential : DUMMY_CREDENTIALS) {
+//                String[] pieces = credential.split(":");
+//                if (pieces[0].equals(mEmail)) {
+//                    // Account exists, return true if the password matches.
+//                    return pieces[1].equals(mPassword);
+//                }
+//            }*/
+//
+//            // TODO: register the new account here.
+//            return true;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(final Boolean success) {
+//            mAuthTask = null;
+//            showProgress(false);
+//
+//            if (success) {
+//                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+//                startActivity(intent);
+//            } else {
+//                mPasswordView.setError(getString(R.string.error_incorrect_password));
+//                mPasswordView.requestFocus();
+//            }
+//        }
+//
+//        @Override
+//        protected void onCancelled() {
+//            mAuthTask = null;
+//            showProgress(false);
+//        }
+//    }
+    public class LogInTask extends ClientTask{
+        public LogInTask() {
+            super((LocdevApp) getApplicationContext());
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
-            /*
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }*/
-
-            // TODO: register the new account here.
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (success) {
+        protected void onPostExecute(Response result) {
+//            super.onPostExecute(result);
+//            Log.d(this.getClass().getName(),"Start get response");
+            LogInResponse processResponse = (LogInResponse) result;
+//            Log.d(this.getClass().getName(),"Start get response _ 1");
+            if(processResponse.getSuccessfull()){
+//                Log.d(this.getClass().getName(),"Start get response _ 2");
+                this.app.setUser(processResponse.getUser());
+                processResponse.getUser().setLocation(new Location(38,-9,"My place"));
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+            }else{
+                Toast.makeText(getApplicationContext(), "Unable to Log in", Toast.LENGTH_LONG);
             }
+//            Log.d(this.getClass().getName(),"Start get response _ 3");
+//            Log.d(this.getClass().getName(),"Start get response _ 4");
+        }
+    }
+
+    public class RegisterTask extends ClientTask{
+        public User user;
+        public RegisterTask() {
+            super((LocdevApp) getApplicationContext());
         }
 
         @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
+        protected Response doInBackground(Request... requests) {
+            SignInRequest req = (SignInRequest) requests[0];
+            this.user = req.getUser();
+            return super.doInBackground(requests);
+        }
+
+        @Override
+        protected void onPostExecute(Response result) {
+            Log.d(this.getClass().getName(),"Start sign up");
+            SignInResponse processResponse = (SignInResponse) result;
+            if(processResponse.getSuccessfull()){
+                this.app.setUser(user);
+                user.setLocation(new Location(38,-9,"My place"));
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+            }else{
+                Toast.makeText(getApplicationContext(), "Unable to Log in", Toast.LENGTH_LONG);
+            }
+//            return processResponse.getSuccessfull();
         }
     }
+
 }
 

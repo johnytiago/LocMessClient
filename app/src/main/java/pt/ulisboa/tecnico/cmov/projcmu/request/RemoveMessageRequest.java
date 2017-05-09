@@ -6,8 +6,8 @@ import java.util.ArrayList;
 
 import pt.ulisboa.tecnico.cmov.projcmu.Shared.Location;
 import pt.ulisboa.tecnico.cmov.projcmu.Shared.Message;
+import pt.ulisboa.tecnico.cmov.projcmu.Shared.ServerContext;
 import pt.ulisboa.tecnico.cmov.projcmu.Shared.User;
-import pt.ulisboa.tecnico.cmov.projcmu.core.Context;
 import pt.ulisboa.tecnico.cmov.projcmu.response.Response;
 
 public class RemoveMessageRequest extends Request {
@@ -31,7 +31,7 @@ public class RemoveMessageRequest extends Request {
 	}
 	
 	@Override
-	public Response Run(Context ctx){
+	public Response Run(ServerContext ctx){
 		return this.processRequest(this,ctx);
 	}
 }

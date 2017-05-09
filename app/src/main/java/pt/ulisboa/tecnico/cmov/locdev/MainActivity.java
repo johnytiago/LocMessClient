@@ -15,6 +15,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import pt.ulisboa.tecnico.cmov.projcmu.Client;
+import pt.ulisboa.tecnico.cmov.projcmu.Shared.User;
+
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -54,7 +57,6 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
 
-
     }
 
 
@@ -91,7 +93,8 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+    @SuppressWarnings("StatementWithEmpt" +
+            "yBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
