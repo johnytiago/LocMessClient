@@ -315,7 +315,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             if(processResponse.getSuccessfull()){
 //                Log.d(this.getClass().getName(),"Start get response _ 2");
                 this.app.setUser(processResponse.getUser());
-                processResponse.getUser().setLocation(new Location(38,-9,"My place"));
+//                processResponse.getUser().setLocation(new Location(38,-9,"My place"));
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
             }else{
@@ -345,7 +345,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             SignInResponse processResponse = (SignInResponse) result;
             if(processResponse.getSuccessfull()){
                 this.app.setUser(user);
-                user.setLocation(new Location(38,-9,"My place"));
+//                user.setLocation(new Location(38,-9,"My place"));
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
             }else{

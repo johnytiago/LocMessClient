@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pt.ulisboa.tecnico.cmov.locdev.Application.ClientTask;
+import pt.ulisboa.tecnico.cmov.locdev.Application.FragmentInterface;
 import pt.ulisboa.tecnico.cmov.locdev.Application.LocdevApp;
 import pt.ulisboa.tecnico.cmov.projcmu.Shared.Location;
 import pt.ulisboa.tecnico.cmov.projcmu.Shared.User;
@@ -30,7 +31,7 @@ import pt.ulisboa.tecnico.cmov.projcmu.response.Response;
 import pt.ulisboa.tecnico.cmov.projcmu.response.SignInResponse;
 
 
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment implements FragmentInterface{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -44,8 +45,9 @@ public class ProfileFragment extends Fragment {
     }
 
     private void populateListView(List<Location> newLocations) {
-        String[] locations = {"Monumental", "RNL", "Tenda SINFO", "Tecnico Alameda"};
-        newLocations.add(new Location(0,1,"Monumental"));
+//        String[] locations = {"Monumental", "RNL", "Tenda SINFO", "Tecnico Alameda"};
+        String[] locations = {};
+//        newLocations.add(new Location(0,1,"Monumental"));
 //        List<Location> newLocations = Application.getLocations(Application.getCurrentLocation(),new ArrayList<Integer>());
         if (newLocations.size()>0) {
             locations = new String[newLocations.size()];
@@ -84,8 +86,7 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        populateUser();
-        populateListView();
+        refreshFragment();
         //setClickListener();
     }
 
@@ -101,6 +102,12 @@ public class ProfileFragment extends Fragment {
             keys.concat(key+",");
         }
         TVkeys.setText(keys);
+    }
+
+    @Override
+    public void refreshFragment() {
+        populateUser();
+        populateListView();
     }
 
     public class GetLocationsTask extends ClientTask {
