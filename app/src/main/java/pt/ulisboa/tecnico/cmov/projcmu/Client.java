@@ -10,6 +10,8 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
+import pt.inesc.termite.wifidirect.SimWifiP2pDevice;
+import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocket;
 import pt.ulisboa.tecnico.cmov.projcmu.Shared.Location;
 import pt.ulisboa.tecnico.cmov.projcmu.Shared.Message;
 import pt.ulisboa.tecnico.cmov.projcmu.Shared.User;
@@ -35,20 +37,55 @@ import pt.ulisboa.tecnico.cmov.projcmu.response.SignInResponse;
 public class Client implements ClientInterface{
 	public static final int portNumber = 8086;
 	public static final String TAG = "Client";
+	public static final String ServerIP="10.0.2.2";
 
-	public static Response SendRequest( Request hr) {return Client.SendRequest("10.0.2.2",portNumber,hr);}
+	//Used for the server
+	public static Response SendRequest( Request hr) {
+//		return Client.SendRequest(ServerIP,portNumber,hr);
+		try {
+			Log.d(TAG,"Starting client to: "+ServerIP+":"+portNumber);
+			Socket client = new Socket(ServerIP, portNumber);
 
+			ObjectOutputStream outToServer = new ObjectOutputStream(client.getOutputStream());
+			ObjectInputStream inFromServer = new ObjectInputStream(client.getInputStream());
+
+			outToServer.writeObject(hr);
+			Response a = (Response) inFromServer.readObject();
+
+
+			outToServer.close();
+			inFromServer.close();
+			//System.out.println("Result: " +a.Run());
+			//System.out.println("Done");
+			client.close();
+			return a;
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	//Used when communicating with wifi direct
 	public static Response SendRequest(String ip,int portNumber, Request hr) {
 		try {
 			Log.d(TAG,"Starting client to: "+ip+":"+portNumber);
-			Socket client = new Socket(ip, portNumber);
+			SimWifiP2pSocket client = new SimWifiP2pSocket(ip, portNumber);
 			
 			ObjectOutputStream outToServer = new ObjectOutputStream(client.getOutputStream());
-	        ObjectInputStream inFromServer = new ObjectInputStream(client.getInputStream());
+			outToServer.writeObject(hr);
+//			outToServer.close();
 
-	        outToServer.writeObject(hr);
+			ObjectInputStream inFromServer = new ObjectInputStream(client.getInputStream());
 	        Response a = (Response) inFromServer.readObject();
-	        
+			outToServer.close();
+			inFromServer.close();
 			//System.out.println("Result: " +a.Run());
 			//System.out.println("Done");
 			client.close();

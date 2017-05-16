@@ -109,6 +109,11 @@ public class WifiP2pActivity extends AppCompatActivity implements SimWifiP2pMana
     public void onPause() {
         super.onPause();
         unregisterReceiver(mReceiver);
+        try {
+            mSrvSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         mSrvSocket=null;
 
         if (mBound) {
@@ -222,6 +227,8 @@ public class WifiP2pActivity extends AppCompatActivity implements SimWifiP2pMana
                             Log.d(TAG, "Write Response");
 
 
+                            outToClient.close();
+                            inFromClient.close();
 //                            BufferedReader sockIn = new BufferedReader(
 //                                    new InputStreamReader(sock.getInputStream()));
 //                            String st = sockIn.readLine();

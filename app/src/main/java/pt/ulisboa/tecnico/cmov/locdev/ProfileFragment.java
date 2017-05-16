@@ -134,6 +134,7 @@ public class ProfileFragment extends Fragment implements FragmentInterface{
         @Override
         protected void onPostExecute(Response result) {
             Log.d(this.getClass().getName(),"Start Onpostexecute");
+            if(result==null) return;
             GetInfoFromServerResponse processResponse = (GetInfoFromServerResponse) result;
             this.app.setLocations(processResponse.getLocations());
             populateListView(processResponse.getLocations());
