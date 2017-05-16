@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.cmov.projcmu;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -32,10 +34,14 @@ import pt.ulisboa.tecnico.cmov.projcmu.response.SignInResponse;
 
 public class Client implements ClientInterface{
 	public static final int portNumber = 8086;
-	
-	public static Response SendRequest(Request hr) {
+	public static final String TAG = "Client";
+
+	public static Response SendRequest( Request hr) {return Client.SendRequest("10.0.2.2",portNumber,hr);}
+
+	public static Response SendRequest(String ip,int portNumber, Request hr) {
 		try {
-			Socket client = new Socket("10.0.2.2", portNumber);
+			Log.d(TAG,"Starting client to: "+ip+":"+portNumber);
+			Socket client = new Socket(ip, portNumber);
 			
 			ObjectOutputStream outToServer = new ObjectOutputStream(client.getOutputStream());
 	        ObjectInputStream inFromServer = new ObjectInputStream(client.getInputStream());
@@ -101,11 +107,11 @@ public class Client implements ClientInterface{
 	}
 
 	@Override
-	public List<Location> getLocations(Location loc, List<Integer> BeaconIds) {
+	public List<Location> getLocations(Location loc, List<String> BeaconIds) {
 		if(user==null){
 			return new ArrayList<Location>();
 		}
-		GetInfoFromServerResponse resp = (GetInfoFromServerResponse) SendRequest(new GetInfoFromServerRequest(this.user,loc));
+		GetInfoFromServerResponse resp = (GetInfoFromServerResponse) SendRequest(new GetInfoFromServerRequest(this.user,loc,BeaconIds));
 		locations = resp.getLocations();
 		return resp.getLocations();
 	}

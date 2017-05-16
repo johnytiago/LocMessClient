@@ -36,7 +36,7 @@ public interface ClientInterface {
 	 * Recebe utilizador com localizacao gps do mesmo e ids dos beacons bluetooth encontrados
 	 * devolve lista de localizacoes mais proximas. estas localizacoes vem ja com mensagens disponiveis
 	 * */
-	public List<Location> getLocations(Location loc, List<Integer> BeaconIds);
+	public List<Location> getLocations(Location loc, List<String> BeaconIds);
 	
 	/*
 	 * Criar uma nova localizacao

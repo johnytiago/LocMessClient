@@ -40,7 +40,7 @@ public class MessagesFragment extends Fragment implements FragmentInterface{
 
     private void populateListView(){
         LocdevApp Application = (LocdevApp) getActivity().getApplicationContext();
-        new GetLocationsTask().execute(new GetInfoFromServerRequest(Application.getUser(),Application.getCurrentLocation()));
+        new GetLocationsTask().execute(new GetInfoFromServerRequest(Application.getUser(),Application.getCurrentLocation(),Application.getNearBeacons()));
     }
 
     private void populateListView(List<Message> messages) {

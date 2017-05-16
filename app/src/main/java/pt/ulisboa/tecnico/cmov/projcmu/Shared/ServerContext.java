@@ -12,10 +12,10 @@ public interface ServerContext {
 	public User userRegistered(User user);
 	
 	public boolean AddLocation(Location loc);
+
+	public List<Location> getNearLocationsWithMessages(User user,List<String> BeaconIds);
 	
-	public List<Location> getNearLocationsWithMessages(User user);
-	
-	public List<Location> getNearLocations(User user);
+	public List<Location> getNearLocations(User user,List<String> BeaconIds);
 	
 	public boolean newMessage(Message message);
 	

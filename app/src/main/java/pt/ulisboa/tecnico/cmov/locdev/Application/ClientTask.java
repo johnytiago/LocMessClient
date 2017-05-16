@@ -3,6 +3,8 @@ package pt.ulisboa.tecnico.cmov.locdev.Application;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import pt.inesc.termite.wifidirect.SimWifiP2pDevice;
+import pt.ulisboa.tecnico.cmov.locdev.R;
 import pt.ulisboa.tecnico.cmov.projcmu.Client;
 import pt.ulisboa.tecnico.cmov.projcmu.request.Request;
 import pt.ulisboa.tecnico.cmov.projcmu.response.Response;
@@ -14,9 +16,14 @@ import pt.ulisboa.tecnico.cmov.projcmu.response.Response;
 public class ClientTask extends AsyncTask<Request, Integer, Response> {
     Client cli = new Client();
     public LocdevApp app = null;
+    public SimWifiP2pDevice device = null;
 
     public ClientTask(LocdevApp app){
         this.app = app;
+    }
+
+    public void setDevice(SimWifiP2pDevice device){
+        this.device=device;
     }
 
     protected Response doInBackground(Request... requests) {
@@ -25,7 +32,12 @@ public class ClientTask extends AsyncTask<Request, Integer, Response> {
             return null;
         }
         Request req = requests[0];
-        app.resp=cli.SendRequest(req);
+        if(device==null){
+            app.resp=cli.SendRequest(req);
+        }else{
+            app.resp=cli.SendRequest(device.getVirtIp(), Integer.parseInt(app.getString(R.string.port)),req);
+        }
+
         Log.d(this.getClass().getName(),"BackGround End");
         return app.resp;
     }

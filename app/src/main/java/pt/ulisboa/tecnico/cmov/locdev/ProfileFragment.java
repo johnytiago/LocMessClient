@@ -18,9 +18,11 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import pt.inesc.termite.wifidirect.SimWifiP2pDevice;
 import pt.ulisboa.tecnico.cmov.locdev.Application.ClientTask;
 import pt.ulisboa.tecnico.cmov.locdev.Application.FragmentInterface;
 import pt.ulisboa.tecnico.cmov.locdev.Application.LocdevApp;
+import pt.ulisboa.tecnico.cmov.locdev.wifiP2p.WifiP2pActivity;
 import pt.ulisboa.tecnico.cmov.projcmu.Shared.Location;
 import pt.ulisboa.tecnico.cmov.projcmu.Shared.User;
 import pt.ulisboa.tecnico.cmov.projcmu.request.GetInfoFromServerRequest;
@@ -41,7 +43,7 @@ public class ProfileFragment extends Fragment implements FragmentInterface{
 
     private void populateListView(){
         LocdevApp Application = (LocdevApp) getActivity().getApplicationContext();
-        new GetLocationsTask().execute(new GetInfoFromServerRequest(Application.getUser(),Application.getCurrentLocation()));
+        new GetLocationsTask().execute(new GetInfoFromServerRequest(Application.getUser(),Application.getCurrentLocation(),Application.getNearBeacons()));
     }
 
     private void populateListView(List<Location> newLocations) {
@@ -112,8 +114,14 @@ public class ProfileFragment extends Fragment implements FragmentInterface{
 
     public class GetLocationsTask extends ClientTask {
         public User user;
+
         public GetLocationsTask() {
             super((LocdevApp) getActivity().getApplicationContext());
+            //TODO Funcionalidade básica, melhorar na procura
+            List<SimWifiP2pDevice> devices = ((WifiP2pActivity) getActivity()).getNearDevices();
+            if(devices.size()>0){
+                setDevice(devices.get(0));
+            }
         }
 
         @Override

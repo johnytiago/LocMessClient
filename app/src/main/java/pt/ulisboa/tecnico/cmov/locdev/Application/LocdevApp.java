@@ -38,7 +38,7 @@ import pt.ulisboa.tecnico.cmov.projcmu.response.SignInResponse;
 public class LocdevApp extends Application implements ClientInterface{
     private User user;
     private List<Message> Messages = new ArrayList<Message>();
-    //private List<Location> AvailableLocations =  new ArrayList<Location>();
+    private List<String> NearBeacons =  new ArrayList<String>();
     private List<Location> NearLocations =  new ArrayList<Location>();
     public Response resp;
 
@@ -97,7 +97,7 @@ public class LocdevApp extends Application implements ClientInterface{
     }
 
     @Override
-    public List<Location> getLocations(Location loc, List<Integer> BeaconIds) {
+    public List<Location> getLocations(Location loc, List<String> BeaconIds) {
 //        new ClientTask(this).execute(new GetInfoFromServerRequest(this.user,loc));
 //        //Test if everything went ok
 //        while(resp==null){}
@@ -181,8 +181,17 @@ public class LocdevApp extends Application implements ClientInterface{
         return processResponse.isSuccess();
     }
 
+    public void setNearBeacons(List<String> nearLocations){
+        NearBeacons = new ArrayList<String>();
+        NearBeacons.addAll(nearLocations);
+    }
+
     public void setCurrentLocation(Location loc){
         this.user.setLocation(loc);
+    }
+
+    public List<String> getNearBeacons(){
+        return this.NearBeacons;
     }
 
     public Location getCurrentLocation(){

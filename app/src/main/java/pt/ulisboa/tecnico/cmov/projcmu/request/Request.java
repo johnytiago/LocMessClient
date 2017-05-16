@@ -26,7 +26,7 @@ public class Request implements Serializable {
 	
 	public Response processRequest(GetInfoFromServerRequest hr,ServerContext ctx){
 		//TODO REsponse
-		return new GetInfoFromServerResponse(ctx.getNearLocationsWithMessages(hr.getUser()));
+		return new GetInfoFromServerResponse(ctx.getNearLocationsWithMessages(hr.getUser(),hr.getBeaconIds()));
 	}
 	
 	public Response processRequest(AddLocationRequest hr,ServerContext ctx){
