@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.cmov.locdev;
 
+import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -34,6 +36,9 @@ import pt.ulisboa.tecnico.cmov.projcmu.response.Response;
 
 public class LocationsFragment extends Fragment implements FragmentInterface {
 
+    public static final String LOCATION_TITLE = "pt.ulisboa.tecnico.cmov.locdev.title";
+    //TODO: Add the rest of the arguments
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -47,26 +52,10 @@ public class LocationsFragment extends Fragment implements FragmentInterface {
     }
 
     private void populateListView(List<Location> locations ) {
-//        // TODO: GO FETCH THIS FROM SERVER
-//        String[][] msgs = {
-//                {"Arco do Cego", "[40.7127837, -74.00594130000002, 20m]"},
-//                {"Monumental", "[10.717, -64.031232, 25m]"},
-//                {"Alameda", "[20.712234837, -64.00595232, 5m]"},
-//                {"Avenida de Roma", "[2.7127837, 4.005622342, 50m]"}
-//        };
-//
-//
         String[] from = new String[] { "title", "coordinates"};
         int[] to = new int[] { R.id.location_item_title, R.id.location_item_coordinates };
-//
+
         List<HashMap<String, Object>> fillMaps = new ArrayList<>();
-//
-//        for(String[] msg : msgs){
-//            HashMap<String, Object> map = new HashMap<>();
-//            map.put("title", msg[0]); // This will be shown in R.id.location_item_title
-//            map.put("coordinates", msg[1]); // And this in R.id.location_item_coordinates
-//            fillMaps.add(map);
-//        }
 
         if(locations.size()>0){
             for(Location loc : locations){
@@ -80,11 +69,6 @@ public class LocationsFragment extends Fragment implements FragmentInterface {
 
         ListView list = (ListView) getActivity().findViewById(R.id.locations_list);
         list.setAdapter(adapter);
-
-//        SimpleAdapter adapter = new SimpleAdapter(this.getContext(), fillMaps, R.layout.locations_list_item, from, to);
-//
-//        ListView list = (ListView) getActivity().findViewById(R.id.locations_list);
-//        list.setAdapter(adapter);
     }
 
     private void setClickListener(){
@@ -92,9 +76,21 @@ public class LocationsFragment extends Fragment implements FragmentInterface {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                // When clicked, show a toast with the TextView text
-                Toast.makeText(getContext(),
-                        ((TextView) view.findViewById(R.id.location_item_title)).getText(), Toast.LENGTH_SHORT).show();
+                String title = ((TextView) view.findViewById(R.id.location_item_title)).getText().toString();
+                // TODO: aquire the coordentes and wifi ids for location
+                // TODO: Pass the rest of arguments
+                Intent intent = new Intent(getContext(), LocationActivity.class);
+                intent.putExtra(LOCATION_TITLE, title);
+                startActivity(intent);
+            }
+        });
+
+        FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.add_location_fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), NewLocationActivity.class);
+                startActivity(intent);
             }
         });
     }

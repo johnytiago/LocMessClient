@@ -59,16 +59,8 @@ public class MainActivity extends WifiP2pActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        StartLocationSerices();
+        StartLocationServices();
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -93,7 +85,7 @@ public class MainActivity extends WifiP2pActivity
 
     }
 
-    private void StartLocationSerices() {
+    private void StartLocationServices() {
         // Register the listener with the Location Manager to receive location updates
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -203,7 +195,7 @@ public class MainActivity extends WifiP2pActivity
 
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
-                    StartLocationSerices();
+                    StartLocationServices();
                 } else {
 
                     // permission denied, boo! Disable the

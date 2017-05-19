@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.cmov.locdev;
 
 import android.os.Bundle;
+import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -31,6 +33,11 @@ import pt.ulisboa.tecnico.cmov.projcmu.response.Response;
 
 public class MessagesFragment extends Fragment implements FragmentInterface{
 
+    public static final String MESSAGE_TITLE = "pt.ulisboa.tecnico.cmov.locdev.title";
+    public static final String MESSAGE_AUTHOR = "pt.ulisboa.tecnico.cmov.locdev.author";
+    public static final String MESSAGE_DATE = "pt.ulisboa.tecnico.cmov.locdev.date";
+    //TODO: Add the rest of arguments
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -44,14 +51,6 @@ public class MessagesFragment extends Fragment implements FragmentInterface{
     }
 
     private void populateListView(List<Message> messages) {
-//        messages.add(new Message(new Location(0,0,"algures"),"Mensagem super awesome",new Restriction(true),new User("User","Pass")));
-//         TODO: GO FETCH THIS FROM SERVER
-//        String[][] msgs = {
-//                { "LF Android Developer", "Fred", "25sec ago"},
-//                { "WTB CMU Andoid App", "Barney", "5min ago" },
-//                { "CMU Rocks!!", "George", "10min ago" },
-//                { "WTS CMU Project", "GOD", "1hour ago" } };
-
         String[] from = new String[] { "title", "author", "date"};
         int[] to = new int[] { R.id.message_item_title, R.id.message_item_author, R.id.message_item_date};
 
@@ -73,13 +72,28 @@ public class MessagesFragment extends Fragment implements FragmentInterface{
     }
 
     private void setClickListener(){
+
         ListView listView = (ListView) getActivity().findViewById(R.id.messages_list);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                // When clicked, show a toast with the TextView text
-                Toast.makeText(getContext(),
-                        ((TextView) view.findViewById(R.id.message_item_title)).getText(), Toast.LENGTH_SHORT).show();
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String title = ((TextView) view.findViewById(R.id.message_item_title)).getText().toString();
+                String date = ((TextView) view.findViewById(R.id.message_item_date)).getText().toString();
+                String author = ((TextView) view.findViewById(R.id.message_item_author)).getText().toString();
+                // TODO: Pass the rest of arguments
+                Intent intent = new Intent(getContext(), MessageActivity.class);
+                intent.putExtra(MESSAGE_TITLE, title);
+                intent.putExtra(MESSAGE_AUTHOR, author);
+                intent.putExtra(MESSAGE_DATE, date);
+                startActivity(intent);
+            }
+        });
+
+        FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.messages_fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), NewMessageActivity.class);
+                startActivity(intent);
             }
         });
     }

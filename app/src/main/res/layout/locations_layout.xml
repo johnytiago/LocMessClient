@@ -18,15 +18,15 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floatingActionButton"
+        android:id="@+id/add_location_fab"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:clickable="true"
         android:layout_gravity="bottom|right"
         android:layout_margin="@dimen/fab_margin"
-        app:layout_anchorGravity="bottom|right"
+        android:clickable="true"
         app:backgroundTint="?android:attr/colorBackgroundFloating"
         app:layout_anchor="@+id/locations_list"
-        app:srcCompat="@drawable/ic_add_black_24dp"/>
+        app:layout_anchorGravity="bottom|right"
+        app:srcCompat="@drawable/ic_add_black_24dp" />
 
 </android.support.design.widget.CoordinatorLayout>

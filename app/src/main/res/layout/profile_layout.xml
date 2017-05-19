@@ -17,7 +17,7 @@
         app:backgroundTint="@android:color/background_light"
         app:layout_anchor="@+id/constraintLayout"
         app:layout_anchorGravity="bottom|end"
-        app:srcCompat="@drawable/ic_edit_black_24dp" />
+        app:srcCompat="@drawable/ic_add_black_24dp" />
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"

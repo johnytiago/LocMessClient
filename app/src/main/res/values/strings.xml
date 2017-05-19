@@ -117,6 +117,29 @@
     <string name="profile_email">YOUR AWESOME EMAIL</string>
     <string name="profile_name">YOUR AWESOME NAME</string>
     <string name="title_activity_messages">Messages</string>
+    <string name="title_activity_newMessage">New Message</string>
+    <string name="title_activity_message">Message</string>
     <string name="title_activity_locations">Locations</string>
     <string name="profile_keys_title">YOUR AWESOME KEYS</string>
+    <string name="message_text">YOUR MESSAGE TEXT</string>
+    <string name="message_location">Message Location</string>
+    <string name="message_keys_list">exampleKey == value; example2Key != value2</string>
+    <string name="owner_message">owner of the message</string>
+    <string name="message_owner">Owner</string>
+    <string name="message_date">20 / 02 / 2017</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="new_message_keys_warning" >Add semicolon separated keypairs</string>
+    <string name="new_message_keypair_example">club=Real Madrid;\njob!=Teacher</string>
+    <string name="delivery_mode">Centralized Delivery Mode?</string>
+    <string name="location_name_newMessage">Location Name</string>
+    <string name="edit_text_newMessage">Write your message here.</string>
+    <string name="coordenate_x_newLocation">Coordenate X</string>
+    <string name="coordenate_y_newLocation">Coordenate Y</string>
+    <string name="gps_location_newLocation">GPS Location</string>
+    <string name="wifi_ids_newLocation">WIFI-IDS</string>
+    <string name="x_coordenate_newLocation">X:</string>
+    <string name="y_coordenate_newLocation">Y:</string>
+
 </resources>

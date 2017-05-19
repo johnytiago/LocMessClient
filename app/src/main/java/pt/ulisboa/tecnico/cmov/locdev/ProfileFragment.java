@@ -1,5 +1,13 @@
 package pt.ulisboa.tecnico.cmov.locdev;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.support.design.widget.FloatingActionButton;
+import android.widget.EditText;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import android.app.Application;
 import android.content.Intent;
 import android.support.annotation.Nullable;
@@ -34,11 +42,27 @@ import pt.ulisboa.tecnico.cmov.projcmu.response.SignInResponse;
 
 
 public class ProfileFragment extends Fragment implements FragmentInterface{
+
+    private ArrayAdapter<String> adapter;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         this.getActivity().setTitle(R.string.title_activity_profile);
         return inflater.inflate(R.layout.profile_layout, container, false);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        refreshFragment();
+        //setClickListener();
+    }
+
+    @Override
+    public void refreshFragment() {
+        populateUser();
+        populateListView();
     }
 
     private void populateListView(){
@@ -65,31 +89,78 @@ public class ProfileFragment extends Fragment implements FragmentInterface{
             Toast.makeText(getContext(), "Unable to getLocations", Toast.LENGTH_LONG).show();
             Log.d(this.getClass().getName(),"Unable to getLocations");
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+        MyListView list = (MyListView) getActivity().findViewById(R.id.keys_list_profile);
+        adapter = new ArrayAdapter<>(
                 this.getContext(),
                 android.R.layout.simple_list_item_1,
                 locations);
-        MyListView list = (MyListView) getActivity().findViewById(R.id.keys_list_profile);
         list.setAdapter(adapter);
     }
 
-    private void setClickListener(){
+    private void setClickListener() {
         ListView listView = (ListView) getActivity().findViewById(R.id.keys_list_profile);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                // When clicked, show a toast with the TextView text
-                Toast.makeText(getContext(),
-                        ((TextView) view).getText(), Toast.LENGTH_SHORT).show();
+            public void onItemClick(AdapterView<?> parent, View itemView,
+                                    final int position, long id) {
+
+                View view = (LayoutInflater.from(getContext())).inflate(R.layout.keys_list_input, null);
+
+                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getContext());
+                alertBuilder.setView(view);
+
+                final EditText new_key = (EditText) view.findViewById(R.id.keys_list_input_text);
+                // set alert text to the value of the old key
+                new_key.setText(((TextView) itemView).getText());
+                final String old_key_text = new_key.getText().toString();
+
+                alertBuilder.setCancelable(true)
+                        .setMessage("Edit Key")
+                        .setPositiveButton("Done", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String new_key_text = new_key.getText().toString().trim();
+                                if (!new_key_text.equals(old_key_text)){
+                                    adapter.insert(new_key_text, position);
+                                    adapter.remove(old_key_text);
+                                    adapter.notifyDataSetChanged();
+                                    // TODO: update the key on the server
+                                }
+                            }
+                        });
+                Dialog dialog = alertBuilder.create();
+                dialog.show();
             }
         });
-    }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        refreshFragment();
-        //setClickListener();
+        FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.edit_profile_fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View thisView) {
+                View view = (LayoutInflater.from(getContext())).inflate(R.layout.keys_list_input, null);
+
+                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getContext());
+                alertBuilder.setView(view);
+
+                final EditText new_key = (EditText) view.findViewById(R.id.keys_list_input_text);
+
+                alertBuilder.setCancelable(true)
+                        .setMessage("Add Key")
+                        .setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String new_key_text = new_key.getText().toString();
+                                // Do nothing if no key is set
+                                if (!new_key_text.equals("")) {
+                                    adapter.add(new_key_text);
+                                    adapter.notifyDataSetChanged();
+                                    // TODO: update the keys list on server
+                                }
+                            }
+                        });
+                Dialog dialog = alertBuilder.create();
+                dialog.show();
+            }
+        });
     }
 
     private void populateUser() {
@@ -104,12 +175,6 @@ public class ProfileFragment extends Fragment implements FragmentInterface{
             keys.concat(key+",");
         }
         TVkeys.setText(keys);
-    }
-
-    @Override
-    public void refreshFragment() {
-        populateUser();
-        populateListView();
     }
 
     public class GetLocationsTask extends ClientTask {
