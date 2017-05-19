@@ -113,7 +113,7 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/textViewX"
+                        android:id="@+id/textViewlat"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_margin="8dp"
@@ -124,7 +124,7 @@
                         android:textSize="30sp" />
 
                     <EditText
-                        android:id="@+id/x_coordenate_newLocation"
+                        android:id="@+id/lat_coordenate_newLocation"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_margin="8dp"
@@ -144,7 +144,7 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/textViewY"
+                        android:id="@+id/textViewLon"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_margin="8dp"
@@ -155,7 +155,7 @@
                         android:textSize="30sp" />
 
                     <EditText
-                        android:id="@+id/y_coordenate_newLocation"
+                        android:id="@+id/Lon_coordenate_newLocation"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_margin="8dp"

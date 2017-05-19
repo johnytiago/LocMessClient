@@ -17,6 +17,7 @@ public class ClientTask extends AsyncTask<Request, Integer, Response> {
     Client cli = new Client();
     public LocdevApp app = null;
     public SimWifiP2pDevice device = null;
+    public static SimWifiP2pDevice GO = null;
 
     public ClientTask(LocdevApp app){
         this.app = app;
@@ -32,11 +33,19 @@ public class ClientTask extends AsyncTask<Request, Integer, Response> {
             return null;
         }
         Request req = requests[0];
-        if(device==null){
-            app.resp=cli.SendRequest(req);
-        }else{
-            app.resp=cli.SendRequest(device.getVirtIp(), Integer.parseInt(app.getString(R.string.port)),req);
+
+//        synchronized (this) {
+            if (device == null) {
+//                if (GO != null) {
+//                    app.resp = cli.SendRequest(GO.getVirtIp(), Integer.parseInt(app.getString(R.string.port)), req);
+//                } else {
+                    app.resp = cli.SendRequest(req);
+//                }
+            } else {
+                app.resp = cli.SendRequest(device.getVirtIp(), Integer.parseInt(app.getString(R.string.port)), req);
+//            }
         }
+
 
         Log.d(this.getClass().getName(),"BackGround End");
         return app.resp;

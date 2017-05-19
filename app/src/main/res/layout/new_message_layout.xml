@@ -110,7 +110,7 @@
                         app:srcCompat="@drawable/ic_place_black_24dp"
                         tools:ignore="ContentDescription" />
 
-                    <EditText
+                    <AutoCompleteTextView
                         android:id="@+id/location_message"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"

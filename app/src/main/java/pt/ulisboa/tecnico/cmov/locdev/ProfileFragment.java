@@ -59,7 +59,7 @@ public class ProfileFragment extends Fragment implements FragmentInterface{
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         refreshFragment();
-        //setClickListener();
+        setClickListener();
     }
 
     @Override
@@ -83,7 +83,7 @@ public class ProfileFragment extends Fragment implements FragmentInterface{
             locations = new String[Keypairs.size()];
             int i=0;
             for(String Key : Keypairs.keySet()){
-                locations[i] = "Key: " + Key + " Value: " + Keypairs.get(Key);
+                locations[i] =  Key + ":" + Keypairs.get(Key);
                 i++;
             }
 //            locations = newLocations.toArray(locations);
@@ -123,11 +123,27 @@ public class ProfileFragment extends Fragment implements FragmentInterface{
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 String new_key_text = new_key.getText().toString().trim();
-                                if (!new_key_text.equals(old_key_text)){
-                                    adapter.insert(new_key_text, position);
-                                    adapter.remove(old_key_text);
-                                    adapter.notifyDataSetChanged();
+                                if(new_key_text.isEmpty()){
+//                                    adapter.remove(old_key_text);
+//                                    adapter.notifyDataSetChanged();
                                     // TODO: update the key on the server
+                                    String[] keypair = old_key_text.split(":");
+                                    LocdevApp app = (LocdevApp) getActivity().getApplicationContext();
+                                    app.removeKeyPair(keypair[0]);
+                                    refreshFragment();
+
+                                }else if (!new_key_text.equals(old_key_text)){
+//                                    adapter.insert(new_key_text, position);
+//                                    adapter.remove(old_key_text);
+//                                    adapter.notifyDataSetChanged();
+                                    // TODO: update the key on the server
+
+                                    String[] keypair = new_key_text.split(":");
+                                    if(keypair.length>1) {
+                                        LocdevApp app = (LocdevApp) getActivity().getApplicationContext();
+                                        app.addKeyPair(keypair[0], keypair[1]);
+                                        refreshFragment();
+                                    }
                                 }
                             }
                         });
@@ -155,9 +171,15 @@ public class ProfileFragment extends Fragment implements FragmentInterface{
                                 String new_key_text = new_key.getText().toString();
                                 // Do nothing if no key is set
                                 if (!new_key_text.equals("")) {
-                                    adapter.add(new_key_text);
-                                    adapter.notifyDataSetChanged();
-                                    // TODO: update the keys list on server
+//                                    adapter.add(new_key_text);
+//                                    adapter.notifyDataSetChanged();
+                                    String[] keypair = new_key_text.split(":");
+                                    if(keypair.length>1) {
+                                        LocdevApp app = (LocdevApp) getActivity().getApplicationContext();
+                                        app.addKeyPair(keypair[0], keypair[1]);
+                                        refreshFragment();
+                                        //TODO: update the keys list on server (Feito? Testar)
+                                    }
                                 }
                             }
                         });

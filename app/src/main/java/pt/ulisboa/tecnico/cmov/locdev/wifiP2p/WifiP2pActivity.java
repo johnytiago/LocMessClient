@@ -33,11 +33,16 @@ import pt.inesc.termite.wifidirect.service.SimWifiP2pService;
 import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocket;
 import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketManager;
 import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketServer;
+import pt.ulisboa.tecnico.cmov.locdev.Application.ClientTask;
 import pt.ulisboa.tecnico.cmov.locdev.Application.LocdevApp;
+import pt.ulisboa.tecnico.cmov.locdev.Application.SetGoRequest;
 import pt.ulisboa.tecnico.cmov.locdev.R;
 import pt.ulisboa.tecnico.cmov.projcmu.Client;
+import pt.ulisboa.tecnico.cmov.projcmu.Shared.User;
 import pt.ulisboa.tecnico.cmov.projcmu.request.AddMessageRequest;
 import pt.ulisboa.tecnico.cmov.projcmu.request.Request;
+import pt.ulisboa.tecnico.cmov.projcmu.response.AddMessageResponse;
+import pt.ulisboa.tecnico.cmov.projcmu.response.Response;
 
 /**
  * Created by Pedro Alcobia on 12/05/2017.
@@ -54,6 +59,8 @@ public class WifiP2pActivity extends AppCompatActivity implements SimWifiP2pMana
     private SimWifiP2pSocket mCliSocket = null;
     private SimWifiP2pBroadcastReceiver mReceiver;
     private List<SimWifiP2pDevice> nearDevices = new ArrayList<SimWifiP2pDevice>();
+    public SimWifiP2pDevice GO = null;
+    boolean UpdatedGO=false;
 
     private ServiceConnection mConnection = new ServiceConnection() {
         // callbacks for service binding, passed to bindService()
@@ -112,7 +119,7 @@ public class WifiP2pActivity extends AppCompatActivity implements SimWifiP2pMana
         unregisterReceiver(mReceiver);
         try {
             mSrvSocket.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         mSrvSocket=null;
@@ -121,6 +128,9 @@ public class WifiP2pActivity extends AppCompatActivity implements SimWifiP2pMana
             unbindService(mConnection);
             mBound = false;
         }
+        nearDevices = new ArrayList<SimWifiP2pDevice>();
+        GO=null;
+        ClientTask.GO=null;
         Log.d(this.getClass().getName(),"onPause");
     }
 
@@ -167,6 +177,16 @@ public class WifiP2pActivity extends AppCompatActivity implements SimWifiP2pMana
         }
     }
 
+    public void requestGroupInfo(){
+        Log.d(this.getClass().getName(), "requestPeers");
+        if (mBound) {
+            mManager.requestGroupInfo(mChannel, WifiP2pActivity.this);
+        } else {
+            Toast.makeText(this, "Service not bound",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
     public void onGroupInfoAvailable(SimWifiP2pDeviceList devices,
                                      SimWifiP2pInfo groupInfo) {
@@ -178,6 +198,7 @@ public class WifiP2pActivity extends AppCompatActivity implements SimWifiP2pMana
             String devstr = "" + deviceName + " (" +
                     ((device == null)?"??":device.getVirtIp()) + ")\n";
             peersStr.append(devstr);
+            groupInfo.askIsGO();
         }
 
         // display list of network members
@@ -189,6 +210,18 @@ public class WifiP2pActivity extends AppCompatActivity implements SimWifiP2pMana
                     }
                 })
                 .show();
+
+        if(!UpdatedGO){
+            if(groupInfo.askIsGO()){
+                for(SimWifiP2pDevice device :nearDevices){
+                    SendGoRequest(groupInfo.getDeviceName(),device);
+                }
+            }
+            UpdatedGO=true;
+        }
+
+
+        RefreshActivityFromWifiP2p();
     }
 
     public List<SimWifiP2pDevice> getNearDevices(){
@@ -209,6 +242,7 @@ public class WifiP2pActivity extends AppCompatActivity implements SimWifiP2pMana
             try {
                 mSrvSocket = new SimWifiP2pSocketServer(
                         Integer.parseInt(getString(R.string.port)));
+
                 while (!Thread.currentThread().isInterrupted() && mSrvSocket != null) {
                     try {
                         Log.d(TAG, "Accepting Message");
@@ -224,6 +258,21 @@ public class WifiP2pActivity extends AppCompatActivity implements SimWifiP2pMana
                                 AddMessageRequest request = (AddMessageRequest) req;
                                 LocdevApp app = (LocdevApp) getApplicationContext();
                                 app.addMessage(request.getMensagem());
+                                AddMessageResponse resp = new AddMessageResponse(true);
+                                outToClient.writeObject(resp);
+                                outToClient.flush();
+                            }else if(req instanceof SetGoRequest){
+                                String deviceName=((SetGoRequest) req).deviceName;
+                                for(SimWifiP2pDevice device :nearDevices){
+                                    if(device.deviceName.equals(deviceName)){
+                                        GO=device;
+                                        ClientTask.GO=GO;
+                                        break;
+                                    }
+                                }
+                                AddMessageResponse resp = new AddMessageResponse(true);
+                                outToClient.writeObject(resp);
+                                outToClient.flush();
                             }else{
                                 Client cli = new Client();
                                 Log.d(TAG, "got Request");
@@ -260,6 +309,50 @@ public class WifiP2pActivity extends AppCompatActivity implements SimWifiP2pMana
         @Override
         protected void onProgressUpdate(String... values) {
 //            mTextOutput.append(values[0] + "\n");
+            RefreshActivityFromWifiP2p();
+        }
+    }
+
+    //TO refresh child activity
+    public void RefreshActivityFromWifiP2p(){
+    }
+
+    public void SendGoRequest(String deviceName,SimWifiP2pDevice sendTO){
+        Log.d(this.getClass().getName(),"Im GO: Set GO");
+        new PostMessageTask(sendTO).execute(new SetGoRequest(deviceName));
+    }
+
+    /*Posting a message*/
+    public class PostMessageTask extends ClientTask {
+        public PostMessageTask() {
+            super((LocdevApp) getApplicationContext());
+        }
+
+        public PostMessageTask(SimWifiP2pDevice device) {
+            super((LocdevApp) getApplicationContext());
+            this.device=device;
+        }
+
+
+        @Override
+        protected Response doInBackground(Request... requests) {
+//            AddMessageRequest req = (AddMessageRequest) requests[0];
+//            this.user = req.getUser();
+            return super.doInBackground(requests);
+        }
+
+        @Override
+        protected void onPostExecute(Response result) {
+            Log.d(this.getClass().getName(),"Start Onpostexecute");
+            if(result==null) return;
+            AddMessageResponse processResponse = (AddMessageResponse) result;
+//            this.app.setLocations(processResponse.getLocations());
+            if (processResponse.isSuccess()) {
+                Log.d(this.getClass().getName(), "Start Onpostexecute Success");
+            } else {
+                Log.d(this.getClass().getName(), "Start Onpostexecute Failed");
+            }
+//
         }
     }
 }

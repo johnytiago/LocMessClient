@@ -76,10 +76,12 @@ public class Client implements ClientInterface{
 	public static Response SendRequest(String ip,int portNumber, Request hr) {
 		try {
 			Log.d(TAG,"Starting client to: "+ip+":"+portNumber);
+
 			SimWifiP2pSocket client = new SimWifiP2pSocket(ip, portNumber);
-			
+
 			ObjectOutputStream outToServer = new ObjectOutputStream(client.getOutputStream());
 			outToServer.writeObject(hr);
+			outToServer.flush();
 //			outToServer.close();
 
 			ObjectInputStream inFromServer = new ObjectInputStream(client.getInputStream());

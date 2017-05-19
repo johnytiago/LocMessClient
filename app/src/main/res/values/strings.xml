@@ -135,11 +135,11 @@
     <string name="delivery_mode">Centralized Delivery Mode?</string>
     <string name="location_name_newMessage">Location Name</string>
     <string name="edit_text_newMessage">Write your message here.</string>
-    <string name="coordenate_x_newLocation">Coordenate X</string>
-    <string name="coordenate_y_newLocation">Coordenate Y</string>
+    <string name="coordenate_x_newLocation">Latitude</string>
+    <string name="coordenate_y_newLocation">Longitude</string>
     <string name="gps_location_newLocation">GPS Location</string>
     <string name="wifi_ids_newLocation">WIFI-IDS</string>
-    <string name="x_coordenate_newLocation">X:</string>
-    <string name="y_coordenate_newLocation">Y:</string>
+    <string name="x_coordenate_newLocation">Lat:</string>
+    <string name="y_coordenate_newLocation">Lon:</string>
 
 </resources>

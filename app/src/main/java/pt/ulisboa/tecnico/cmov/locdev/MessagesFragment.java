@@ -53,6 +53,16 @@ public class MessagesFragment extends Fragment implements FragmentInterface{
 
     private void populateListView(){
         LocdevApp Application = (LocdevApp) getActivity().getApplicationContext();
+        for(Message m : Application.MessagesToAdd){
+            sendMessage(m);
+        }
+        SendToPeersIfAvailable();
+        Application.MessagesToAdd = new ArrayList<Message>();
+        for(Message m : Application.MessagesToRemove){
+            RemoveMessage(m);
+        }
+        Application.MessagesToRemove = new ArrayList<Message>();
+
         new GetLocationsTask().execute(new GetInfoFromServerRequest(Application.getUser(),Application.getCurrentLocation(),Application.getNearBeacons()));
     }
 
@@ -146,14 +156,35 @@ public class MessagesFragment extends Fragment implements FragmentInterface{
         new PostMessageTask().execute(req);
     }
 
+    private void SendToPeersIfAvailable() {
+        LocdevApp app = (LocdevApp) getActivity().getApplicationContext();
+        List<SimWifiP2pDevice> devices = ((MainActivity) getActivity()).getNearDevices();
+        if(devices.size()<1) return;
+        List<Message> messages = app.MessagesToSendToPeers;
+        for(Message m : messages){
+            AddMessageRequest req = new AddMessageRequest(m);
+            for(SimWifiP2pDevice device : devices){
+                Log.d(this.getClass().getName(),"messages being sent: " +device.getVirtIp() + " message: " + m.getMessage());
+                new PostMessageTask(device).execute(req);
+            }
+        }
+    }
+
     //Funciton to execute the message sending Decentralized.
     public void sendMessage(Message m){
         List<SimWifiP2pDevice> devices = ((WifiP2pActivity) getActivity()).getNearDevices();
         AddMessageRequest req = new AddMessageRequest(m);
-        for(SimWifiP2pDevice device : devices){
-            //send to peers
-            new PostMessageTask(device).execute(req);
-        }
+//        if(devices.size()>0){
+//            ((MainActivity) getActivity()).requestPeers();
+//            ((MainActivity) getActivity()).requestGroupInfo();
+//            for (SimWifiP2pDevice device : devices) {
+//                //send to peers
+//                new PostMessageTask(device).execute(req);
+//            }
+//        }else{
+            LocdevApp app = (LocdevApp) getActivity().getApplicationContext();
+            app.MessagesToSendToPeers.add(m);
+//        }
         // send to server
         new PostMessageTask().execute(req);
     }

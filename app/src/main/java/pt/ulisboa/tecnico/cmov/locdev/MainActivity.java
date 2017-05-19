@@ -93,6 +93,12 @@ public class MainActivity extends WifiP2pActivity
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fragment.refreshFragment();
+    }
+
     private void StartLocationServices() {
         // Register the listener with the Location Manager to receive location updates
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -222,5 +228,13 @@ public class MainActivity extends WifiP2pActivity
     public void finish() {
         super.finish();
         Log.d(this.getClass().getName(),"OnFinish");
+    }
+
+    @Override
+    public void RefreshActivityFromWifiP2p(){
+        Log.d(getClass().getName(),"RefreshActivityFromWifiP2p Main class");
+        if(fragment!=null){
+            fragment.refreshFragment();
+        }
     }
 }

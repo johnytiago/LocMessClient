@@ -40,6 +40,15 @@ public class LocdevApp extends Application implements ClientInterface{
     private List<Message> Messages = new ArrayList<Message>();
     private List<String> NearBeacons =  new ArrayList<String>();
     private List<Location> NearLocations =  new ArrayList<Location>();
+
+    public List<Location> LocationsToAdd = new ArrayList<Location>();
+    public List<Location> LocationsToRemove = new ArrayList<Location>();
+
+    public List<Message> MessagesToSendToPeers = new ArrayList<Message>();
+
+    public List<Message> MessagesToAdd = new ArrayList<Message>();
+    public List<Message> MessagesToRemove = new ArrayList<Message>();
+
     public Response resp;
 
     @Override
@@ -214,5 +223,18 @@ public class LocdevApp extends Application implements ClientInterface{
         NearLocations = new ArrayList<Location>();
         NearLocations.addAll(locations);
         getAvailableMessages();
+    }
+
+    public void removeKeyPair(String key) {
+        if(user==null){
+            System.err.println("session not initiated");
+//            return false;
+        }
+        this.user.removeKeyPair(key);
+        new ClientTask(this).execute(new SaveProfileRequest(this.user));
+        while(resp==null){}
+        SaveProfileResponse processResponse = (SaveProfileResponse) resp;
+        resp=null;
+//        processResponse.isSuccess();
     }
 }

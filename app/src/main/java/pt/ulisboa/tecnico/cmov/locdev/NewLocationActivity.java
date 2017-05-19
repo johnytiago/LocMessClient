@@ -22,6 +22,9 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import pt.ulisboa.tecnico.cmov.locdev.Application.LocdevApp;
+import pt.ulisboa.tecnico.cmov.projcmu.Shared.Location;
+
 /**
  * Created by johnytiago on 13/05/2017.
  */
@@ -87,9 +90,22 @@ public class NewLocationActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: use users input and send to server or relay
-                // wifi_ids array to send
-                String name = ((TextView) findViewById(R.id.location_name_newLocation)).getText().toString();
+                if(findViewById(R.id.wifiIds_layout_newLocation).getVisibility()==View.GONE) {
+                    // TODO: use users input and send to server or relay
+                    // wifi_ids array to send
+                    String name = ((TextView) findViewById(R.id.location_name_newLocation)).getText().toString();
+                    double lat = new Double(((TextView) findViewById(R.id.lat_coordenate_newLocation)).getText().toString());
+                    double lon = new Double(((TextView) findViewById(R.id.Lon_coordenate_newLocation)).getText().toString());
+//                long rng = new Long(((TextView) findViewById(R.id.radius_newLocation)).getText().toString());
+                    LocdevApp app = (LocdevApp) getApplicationContext();
+                    app.LocationsToAdd.add(new Location(lat, lon, name, app.getUser()));
+                    finish();
+                }else{
+                    String name = ((TextView) findViewById(R.id.location_name_newLocation)).getText().toString();
+                    LocdevApp app = (LocdevApp) getApplicationContext();
+                    app.getNearBeacons().add(name);
+                    finish();
+                }
             }
         });
 

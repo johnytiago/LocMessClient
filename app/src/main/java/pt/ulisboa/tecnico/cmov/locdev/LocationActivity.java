@@ -14,12 +14,18 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+
+import pt.ulisboa.tecnico.cmov.locdev.Application.LocdevApp;
+import pt.ulisboa.tecnico.cmov.projcmu.Shared.Location;
 
 /**
  * Created by johnytiago on 13/05/2017.
  */
 
 public class LocationActivity extends AppCompatActivity {
+    Location selectedLocation = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,11 +37,23 @@ public class LocationActivity extends AppCompatActivity {
         // Get the Intent that started this activity and extract the string
         Intent intent = getIntent();
         final String location_name = intent.getStringExtra(LocationsFragment.LOCATION_TITLE);
+        LocdevApp app = (LocdevApp) getApplicationContext();
+        List<Location> locations = app.getLocations(null,null);
+        for(Location loc : locations){
+            if(loc.getName().equals(location_name)){
+                selectedLocation=loc;
+                break;
+            }
+        }
         //TODO: receive the rest of the arguments
 
         // Capture the layout's TextView and set the string as its text
         TextView titleView = (TextView) findViewById(R.id.location_name_location);
-        titleView.setText(location_name);
+        TextView LatView = (TextView) findViewById(R.id.x_coordenate_location);
+        TextView LonView = (TextView) findViewById(R.id.y_coordenate_location);
+        titleView.setText(selectedLocation.getName());
+        LatView.setText(""+selectedLocation.getLat());
+        LonView.setText(""+selectedLocation.getLng());
         //TODO: if is of type GPS set GONE for the wifiid layout
         // if not of type GPS set GONE for coordenates layouts & populate list
 
@@ -49,7 +67,10 @@ public class LocationActivity extends AppCompatActivity {
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 Toast.makeText(LocationActivity.this, "Location: "+location_name+" was removed.", Toast.LENGTH_SHORT).show();
-                                onBackPressed();
+//                                onBackPressed();
+                                LocdevApp app = (LocdevApp) getApplicationContext();
+                                app.LocationsToRemove.add(selectedLocation);
+                                finish();
                                 //TODO: Remove on the server
                             }
                         })

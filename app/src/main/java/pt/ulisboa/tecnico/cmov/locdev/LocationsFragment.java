@@ -55,6 +55,15 @@ public class LocationsFragment extends Fragment implements FragmentInterface {
 
     private void populateListView(){
         LocdevApp Application = (LocdevApp) getActivity().getApplicationContext();
+        for(Location loc : Application.LocationsToAdd){
+            AddLocation(loc);
+        }
+        Application.LocationsToAdd = new ArrayList<Location>();
+        for(Location loc : Application.LocationsToRemove){
+            RemoveLocation(loc);
+        }
+        Application.LocationsToRemove = new ArrayList<Location>();
+
         new GetLocationsTask().execute(new GetInfoFromServerRequest(Application.getUser(),Application.getCurrentLocation(),Application.getNearBeacons()));
     }
 
