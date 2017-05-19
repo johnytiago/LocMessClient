@@ -15,6 +15,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -53,6 +54,12 @@ public class MainActivity extends WifiP2pActivity
     };
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        locationManager.removeUpdates(locationListener);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -74,6 +81,7 @@ public class MainActivity extends WifiP2pActivity
 
         try {
             FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             ProfileFragment fragment = ProfileFragment.class.newInstance();
             this.fragment=fragment;
             fragmentManager.beginTransaction()
@@ -175,6 +183,7 @@ public class MainActivity extends WifiP2pActivity
         }
 
         FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         fragmentManager.beginTransaction()
                 .replace(R.id.content_frame, fragment)
                 .commit();
@@ -207,5 +216,11 @@ public class MainActivity extends WifiP2pActivity
             // other 'case' lines to check for other
             // permissions this app might request
         }
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        Log.d(this.getClass().getName(),"OnFinish");
     }
 }

@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import pt.inesc.termite.wifidirect.SimWifiP2pDevice;
 import pt.ulisboa.tecnico.cmov.locdev.Application.ClientTask;
@@ -35,9 +36,11 @@ import pt.ulisboa.tecnico.cmov.projcmu.Shared.Location;
 import pt.ulisboa.tecnico.cmov.projcmu.Shared.User;
 import pt.ulisboa.tecnico.cmov.projcmu.request.GetInfoFromServerRequest;
 import pt.ulisboa.tecnico.cmov.projcmu.request.Request;
+import pt.ulisboa.tecnico.cmov.projcmu.request.SaveProfileRequest;
 import pt.ulisboa.tecnico.cmov.projcmu.request.SignInRequest;
 import pt.ulisboa.tecnico.cmov.projcmu.response.GetInfoFromServerResponse;
 import pt.ulisboa.tecnico.cmov.projcmu.response.Response;
+import pt.ulisboa.tecnico.cmov.projcmu.response.SaveProfileResponse;
 import pt.ulisboa.tecnico.cmov.projcmu.response.SignInResponse;
 
 
@@ -68,18 +71,19 @@ public class ProfileFragment extends Fragment implements FragmentInterface{
     private void populateListView(){
         LocdevApp Application = (LocdevApp) getActivity().getApplicationContext();
         new GetLocationsTask().execute(new GetInfoFromServerRequest(Application.getUser(),Application.getCurrentLocation(),Application.getNearBeacons()));
+        new ProfileTask().execute(new SaveProfileRequest(Application.getUser()));
     }
 
-    private void populateListView(List<Location> newLocations) {
+    private void populateListView(Map<String,String> Keypairs) {
 //        String[] locations = {"Monumental", "RNL", "Tenda SINFO", "Tecnico Alameda"};
         String[] locations = {};
 //        newLocations.add(new Location(0,1,"Monumental"));
 //        List<Location> newLocations = Application.getLocations(Application.getCurrentLocation(),new ArrayList<Integer>());
-        if (newLocations.size()>0) {
-            locations = new String[newLocations.size()];
+        if (Keypairs.size()>0) {
+            locations = new String[Keypairs.size()];
             int i=0;
-            for(Location loc : newLocations){
-                locations[i] = loc.getName();
+            for(String Key : Keypairs.keySet()){
+                locations[i] = "Key: " + Key + " Value: " + Keypairs.get(Key);
                 i++;
             }
 //            locations = newLocations.toArray(locations);
@@ -202,7 +206,33 @@ public class ProfileFragment extends Fragment implements FragmentInterface{
             if(result==null) return;
             GetInfoFromServerResponse processResponse = (GetInfoFromServerResponse) result;
             this.app.setLocations(processResponse.getLocations());
-            populateListView(processResponse.getLocations());
+//            populateListView(processResponse.getLocations());
+        }
+    }
+
+
+
+    public class ProfileTask extends ClientTask {
+        public User user;
+
+        public ProfileTask() {
+            super((LocdevApp) getActivity().getApplicationContext());
+        }
+
+        @Override
+        protected Response doInBackground(Request... requests) {
+//            GetInfoFromServerRequest req = (GetInfoFromServerRequest) requests[0];
+//            this.user = req.getUser();
+            return super.doInBackground(requests);
+        }
+
+        @Override
+        protected void onPostExecute(Response result) {
+            Log.d(this.getClass().getName(),"Start Onpostexecute");
+            if(result==null) return;
+            SaveProfileResponse processResponse = (SaveProfileResponse) result;
+//            this.app.setLocations(processResponse.getLocations());
+            populateListView(app.getUser().getProfile().getKeyPairs());
         }
     }
 }

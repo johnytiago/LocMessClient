@@ -36,6 +36,7 @@ import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketServer;
 import pt.ulisboa.tecnico.cmov.locdev.Application.LocdevApp;
 import pt.ulisboa.tecnico.cmov.locdev.R;
 import pt.ulisboa.tecnico.cmov.projcmu.Client;
+import pt.ulisboa.tecnico.cmov.projcmu.request.AddMessageRequest;
 import pt.ulisboa.tecnico.cmov.projcmu.request.Request;
 
 /**
@@ -219,13 +220,18 @@ public class WifiP2pActivity extends AppCompatActivity implements SimWifiP2pMana
                             ObjectInputStream inFromClient = new ObjectInputStream(sock.getInputStream());
 
                             Request req = (Request) inFromClient.readObject();
-                            Client cli = new Client();
-                            Log.d(TAG, "got Request");
+                            if(req instanceof AddMessageRequest){
+                                AddMessageRequest request = (AddMessageRequest) req;
+                                LocdevApp app = (LocdevApp) getApplicationContext();
+                                app.addMessage(request.getMensagem());
+                            }else{
+                                Client cli = new Client();
+                                Log.d(TAG, "got Request");
 
-                            outToClient.writeObject(cli.SendRequest(req));
-                            outToClient.flush();
-                            Log.d(TAG, "Write Response");
-
+                                outToClient.writeObject(cli.SendRequest(req));
+                                outToClient.flush();
+                                Log.d(TAG, "Write Response");
+                            }
 
                             outToClient.close();
                             inFromClient.close();

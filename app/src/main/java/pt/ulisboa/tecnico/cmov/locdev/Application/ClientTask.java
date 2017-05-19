@@ -46,18 +46,5 @@ public class ClientTask extends AsyncTask<Request, Integer, Response> {
     }
 
     protected void onPostExecute(Response result) {
-//            Log.d(this.getClass().getName(),"End OnpostExecute");
-//            app.resp=result;
-//            if(result==null){
-//                Log.d(this.getClass().getName(),"Result Null");
-//            }
-//            if(resp==null){
-//                Log.d(this.getClass().getName(),"Resp Null");
-//            }
-//            Log.d(this.getClass().getName(),"End OnpostExecute");
-//            //Toast.makeText(,"",Toast.LENGTH_LONG);
-//            //showDialog("Downloaded " + result + " bytes");
-
-
     }
 }

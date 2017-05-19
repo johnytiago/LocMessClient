@@ -167,6 +167,11 @@ public class LocdevApp extends Application implements ClientInterface{
         return messages;
     }
 
+    public void addMessage(Message m){
+        NearLocations.add(m.getLocation());
+        Messages.add(m);
+    }
+
     @Override
     public boolean addKeyPair(String key, String value) {
         if(user==null){

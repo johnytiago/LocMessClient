@@ -19,16 +19,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import pt.inesc.termite.wifidirect.SimWifiP2pDevice;
 import pt.ulisboa.tecnico.cmov.locdev.Application.ClientTask;
 import pt.ulisboa.tecnico.cmov.locdev.Application.FragmentInterface;
 import pt.ulisboa.tecnico.cmov.locdev.Application.LocdevApp;
+import pt.ulisboa.tecnico.cmov.locdev.wifiP2p.WifiP2pActivity;
 import pt.ulisboa.tecnico.cmov.projcmu.Shared.Location;
 import pt.ulisboa.tecnico.cmov.projcmu.Shared.Message;
 import pt.ulisboa.tecnico.cmov.projcmu.Shared.Restriction;
 import pt.ulisboa.tecnico.cmov.projcmu.Shared.User;
+import pt.ulisboa.tecnico.cmov.projcmu.request.AddMessageRequest;
 import pt.ulisboa.tecnico.cmov.projcmu.request.GetInfoFromServerRequest;
+import pt.ulisboa.tecnico.cmov.projcmu.request.RemoveMessageRequest;
 import pt.ulisboa.tecnico.cmov.projcmu.request.Request;
+import pt.ulisboa.tecnico.cmov.projcmu.response.AddMessageResponse;
 import pt.ulisboa.tecnico.cmov.projcmu.response.GetInfoFromServerResponse;
+import pt.ulisboa.tecnico.cmov.projcmu.response.RemoveMessageResponse;
 import pt.ulisboa.tecnico.cmov.projcmu.response.Response;
 
 public class MessagesFragment extends Fragment implements FragmentInterface{
@@ -129,6 +135,71 @@ public class MessagesFragment extends Fragment implements FragmentInterface{
             GetInfoFromServerResponse processResponse = (GetInfoFromServerResponse) result;
             this.app.setLocations(processResponse.getLocations());
             populateListView(this.app.getAvailableMessages());
+        }
+    }
+
+    //Funciton to execute the message remove.
+    public void RemoveMessage(Message m){
+        LocdevApp app = (LocdevApp) getActivity().getApplicationContext();
+        RemoveMessageRequest req = new RemoveMessageRequest(m,app.getUser());
+        // send to server
+        new PostMessageTask().execute(req);
+    }
+
+    //Funciton to execute the message sending Decentralized.
+    public void sendMessage(Message m){
+        List<SimWifiP2pDevice> devices = ((WifiP2pActivity) getActivity()).getNearDevices();
+        AddMessageRequest req = new AddMessageRequest(m);
+        for(SimWifiP2pDevice device : devices){
+            //send to peers
+            new PostMessageTask(device).execute(req);
+        }
+        // send to server
+        new PostMessageTask().execute(req);
+    }
+
+    /*Posting a message*/
+    public class PostMessageTask extends ClientTask {
+        public User user;
+
+        public PostMessageTask() {
+            super((LocdevApp) getActivity().getApplicationContext());
+        }
+
+        public PostMessageTask(SimWifiP2pDevice device){
+            super((LocdevApp) getActivity().getApplicationContext());
+            setDevice(device);
+        }
+
+        @Override
+        protected Response doInBackground(Request... requests) {
+//            AddMessageRequest req = (AddMessageRequest) requests[0];
+//            this.user = req.getUser();
+            return super.doInBackground(requests);
+        }
+
+        @Override
+        protected void onPostExecute(Response result) {
+            Log.d(this.getClass().getName(),"Start Onpostexecute");
+            if(result instanceof AddMessageResponse ) {
+                AddMessageResponse processResponse = (AddMessageResponse) result;
+//            this.app.setLocations(processResponse.getLocations());
+                if (processResponse.isSuccess()) {
+                    Log.d(this.getClass().getName(), "Start Onpostexecute Success");
+                } else {
+                    Log.d(this.getClass().getName(), "Start Onpostexecute Failed");
+                }
+//            populateListView(this.app.getAvailableMessages());
+            }else if(result instanceof RemoveMessageResponse){
+                RemoveMessageResponse processResponse = (RemoveMessageResponse) result;
+//            this.app.setLocations(processResponse.getLocations());
+                if (processResponse.isSuccess()) {
+                    Log.d(this.getClass().getName(), "Start Onpostexecute Success");
+                } else {
+                    Log.d(this.getClass().getName(), "Start Onpostexecute Failed");
+                }
+//            populateListView(this.app.getAvailableMessages());
+            }
         }
     }
 }
